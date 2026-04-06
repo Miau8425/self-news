@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Innovators News Platform
 
-## Getting Started
+Hệ thống Website tin tức nội bộ (hoặc tạp chí) với các chức năng phân quyền cơ bản: Admin, Editor, Writer, và Reader.
 
-First, run the development server:
+## Cài đặt & Khởi động
+1. Cài đặt các gói phụ thuộc: `pnpm install`
+2. Khởi tạo Database (Nạp sẵn dữ liệu mẫu): `node seed.cjs` và `node seed_reuters.cjs`
+3. Chạy server ở chế độ Development: `pnpm run dev`
+4. Server lắng nghe tại địa chỉ: `http://localhost:2001` (Cổng 2001 như đã cấu hình trong script `dev`)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔐 Hệ thống Đăng nhập & Cookies
+Ứng dụng sử dụng cơ chế đăng nhập siêu tinh gọn: 
+- Bạn chỉ cần vào trang đăng nhập **`/login`**.
+- Hệ thống hỗ trợ nhập Username (mật khẩu có thể điền bừa ở môi trường test).
+- Ngay sau khi đăng nhập thành công, Server sẽ lưu thông tin user vào Browser **Cookie** (với thời hạn duy trì rất lâu - lên tới 1 năm). Do đó, bạn sẽ không còn cảnh phải đăng nhập lại mỗi khi mở trình duyệt hay F5 lại trang nữa!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 👑 Các Vai Trò (Roles) & Các Nơi Làm Việc
+Hệ thống cấp phát không gian làm việc (Workspaces) chuyên biệt dựa trên Roles:
 
-## Learn More
+### 1. ADMIN (Quản trị viên)
+- **Tài khoản dùng thử**: `admin_master`
+- **Nơi làm việc chính**: `/admin/dashboard` và `/admin/accounts`
+- **Quyền hạn**: 
+  - Xem thống kê tổng bộ (Số bài, số lượt xem, số tài khoản).
+  - Phê duyệt các tài khoản Writer mới đăng ký.
+  - Vận hành, khóa/xóa tài khoản bị lỗi.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. EDITOR (Tổng biên tập / Người duyệt bài)
+- **Tài khoản dùng thử**: `editor_pro`
+- **Nơi làm việc chính**: `/admin/articles/review`
+- **Quyền hạn**:
+  - Đọc các bài viết được nộp bởi nhà báo (Writer).
+  - Quyết định xuất bản (Publish) ra ngoài trang chủ hoặc Từ chối (Reject) bài viết.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. WRITER (Phóng viên / Người viết bài)
+- **Tài khoản dùng thử**: `writer_active`
+- **Nơi làm việc chính**: `/admin/articles/create`
+- **Quyền hạn**:
+  - Truy cập trình soạn thảo văn bản phong phú (Rich Text Editor Tiptap).
+  - Đăng tải hình ảnh bìa và gửi nội dung báo chí mới vào kho trữ chờ duyệt.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+*Tài khoản thử nghiệm chưa kích hoạt (Chờ Admin duyệt):* `writer_req`
 
-## Deploy on Vercel
+### 4. READER (Độc giả - Mặc định)
+- Độc giả vãng lai hoặc đã lưu cookie Reader chỉ đọc các trang Public như Trang chủ `/`, đọc báo `/article/[slug]`. 
+- Cấu trúc trang đích cực kỳ hiện đại, Responsive chuẩn di động.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Công nghệ sử dụng
+- **Core**: Next.js 16 (App Router + React 19)
+- **Database**: SQLite cục bộ (`better-sqlite3`)
+- **Giao diện**: TailwindCSS, Ant Design (Admin UI), Custom Vanilla Headers.
+- **Biên tập bài viết**: Tiptap Rich Text.
+# news
