@@ -29,4 +29,7 @@ export async function loginUser(username: string) {
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete('auth_user');
+  
+  const { redirect } = await import('next/navigation');
+  redirect('/');
 }

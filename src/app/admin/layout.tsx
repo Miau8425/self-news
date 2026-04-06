@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Layout, Menu, Select, Tag } from 'antd';
 import { BarChartOutlined, UserOutlined, EditOutlined, CheckCircleOutlined, FormOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useRouter, usePathname } from 'next/navigation';
+import { logoutAction } from '@/app/login/actions';
 
 const { Header, Content, Sider } = Layout;
 
@@ -70,10 +71,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="cursor-pointer hover:text-red-500 font-semibold" onClick={() => router.push('/')}>
               Về Trang chủ Độc Giả
             </div>
-            <div className="flex items-center gap-2 cursor-pointer text-gray-500 hover:text-red-500" onClick={() => router.push('/login')}>
-              <LogoutOutlined />
-              <span>Đăng xuất</span>
-            </div>
+            <form action={logoutAction}>
+              <button type="submit" className="flex items-center gap-2 cursor-pointer text-gray-500 hover:text-red-500 bg-transparent border-none p-0 focus:outline-none">
+                <LogoutOutlined />
+                <span>Đăng xuất</span>
+              </button>
+            </form>
           </div>
         </Header>
         <Content className="m-6 p-6 bg-white min-h-[280px] rounded-lg shadow-sm">
