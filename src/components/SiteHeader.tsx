@@ -3,7 +3,7 @@ import db from '@/lib/db';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import AuthButton from './AuthButton';
-import MobileNav from './MobileNav';
+import MobileNav from '@/components/MobileNav';
 
 interface SiteHeaderProps {
   currentCategory?: string | null;
@@ -20,25 +20,9 @@ export default async function SiteHeader({ currentCategory, variant = 'home' }: 
 
   const categories = db.prepare(`SELECT * FROM categories LIMIT 6`).all() as any[];
 
-  if (variant === 'article') {
-    return (
-      <header className="sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b border-gray-100">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between gap-4">
-          <Link href="/" className="font-bold text-xs tracking-widest uppercase text-gray-500 hover:text-black transition-colors flex-shrink-0">
-            ← <span className="hidden sm:inline">Trang Chủ</span>
-          </Link>
-          <Link href="/" className="text-lg font-black tracking-tighter uppercase font-serif text-black flex-shrink-0">
-            INNOVATORS
-          </Link>
-          <AuthButton user={user} />
-        </div>
-      </header>
-    );
-  }
-
   return (
     <>
-      <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur-sm z-50 shadow-sm">
+      <header className="border-b border-gray-100/50 sticky top-0 bg-white/95 backdrop-blur-sm z-50 shadow-sm relative">
         <div className="max-w-7xl mx-auto px-5 lg:px-8">
           <div className="flex items-center h-14 md:h-16 gap-3 md:gap-6">
 

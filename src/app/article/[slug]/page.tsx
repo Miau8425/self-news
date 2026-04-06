@@ -54,15 +54,21 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
       <main>
         {/* Article Hero — Full-bleed cinematic */}
-        <section className="relative w-full h-[65vh] md:h-[75vh] min-h-[420px] flex items-end overflow-hidden">
+        <section className="relative w-full h-[65vh] md:h-[75vh] min-h-[420px] flex items-end overflow-hidden bg-gray-100">
           <div className="absolute inset-0">
-            <img
-              src={article.thumbnail_img}
-              alt={article.title}
-              className="w-full h-full object-cover scale-105"
-              style={{ filter: 'brightness(0.9)' }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+            {article.thumbnail_img ? (
+              <img
+                src={article.thumbnail_img}
+                alt="Banner"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                 <span className="text-4xl block mb-2">📰</span>
+                 <span className="font-bold tracking-widest text-sm">KHÔNG CÓ ẢNH BÌA</span>
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
           </div>
           <div className="relative max-w-5xl mx-auto w-full px-4 md:px-8 pb-14 md:pb-20">
             <div className="mb-5 flex items-center gap-3 flex-wrap">

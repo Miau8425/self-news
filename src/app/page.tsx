@@ -107,8 +107,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {bottomStories.map((story, i) => (
                  <Link href={`/article/${story.slug}`} key={i} className="group cursor-pointer flex flex-col">
-                    <div className="overflow-hidden mb-4 AspectRatio aspect-[16/9] w-full">
-                      <img src={story.thumbnail_img} alt="Thumb" className="w-full h-full object-cover group-hover:opacity-90 transition-opacity" />
+                    <div className="overflow-hidden mb-4 AspectRatio aspect-[16/9] w-full bg-gray-100 flex items-center justify-center">
+                      {story.thumbnail_img ? (
+                        <img src={story.thumbnail_img} alt="Thumb" className="w-full h-full object-cover group-hover:opacity-90 transition-opacity" />
+                      ) : (
+                        <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">NO IMAGE</span>
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="text-[11px] font-bold text-amber-600 uppercase mb-2 block">{story.category_name}</div>
@@ -131,8 +135,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
              <div className="flex flex-col gap-8 max-w-4xl">
                {latestStories.map((story: any, i: number) => (
                  <Link href={`/article/${story.slug}`} key={i} className="group flex flex-col sm:flex-row gap-5 items-start border-b border-gray-100 pb-8 last:border-0">
-                   <div className="w-full sm:w-[240px] aspect-[16/9] overflow-hidden rounded-xl bg-gray-100 flex-shrink-0">
-                     <img src={story.thumbnail_img} alt={story.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                   <div className="w-full sm:w-[240px] aspect-[16/9] overflow-hidden rounded-xl bg-gray-100 flex-shrink-0 flex items-center justify-center">
+                     {story.thumbnail_img ? (
+                       <img src={story.thumbnail_img} alt={story.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                     ) : (
+                       <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">NO IMAGE</span>
+                     )}
                    </div>
                    <div className="flex-1">
                      <div className="text-xs font-black text-rose-600 uppercase tracking-widest mb-2 flex items-center gap-2">
