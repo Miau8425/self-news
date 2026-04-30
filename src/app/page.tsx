@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import db from '@/lib/db';
 import SiteHeader from '@/components/SiteHeader';
-
+import SubHeader from '@/components/SubHeader';
 
 export const revalidate = 0;
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ category?: string; sub?: string }> }) {
   const resolvedSearchParams = await searchParams;
   const currentCategory = resolvedSearchParams.category || null;
+  const currentSub = resolvedSearchParams.sub || null;
 
   let featuredQuery = `SELECT a.*, c.name as category_name FROM articles a JOIN categories c ON a.category_id = c.id WHERE a.status = 'PUBLISHED' AND a.is_featured = 1`;
   let latestQuery = `SELECT a.*, c.name as category_name FROM articles a JOIN categories c ON a.category_id = c.id WHERE a.status = 'PUBLISHED'`;
@@ -17,13 +18,19 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     featuredQuery += ` AND c.slug = ?`;
     latestQuery += ` AND c.slug = ?`;
     params.push(currentCategory);
+
+    if (currentSub) {
+      featuredQuery += ` AND a.subcategory_slug = ?`;
+      latestQuery += ` AND a.subcategory_slug = ?`;
+      params.push(currentSub);
+    }
   }
   featuredQuery += ` ORDER BY a.published_at DESC LIMIT 8`;
   latestQuery += ` ORDER BY a.published_at DESC LIMIT 20`;
 
   let dbFeaturedArticles = db.prepare(featuredQuery).all(...params) as any[];
   const latestStories = db.prepare(latestQuery).all(...params) as any[];
-  const categories = db.prepare(`SELECT * FROM categories LIMIT 6`).all() as any[];
+  const categories = db.prepare(`SELECT * FROM categories LIMIT 10`).all() as any[];
 
   // Fallback nếu thiếu bài nổi bật 
   if (dbFeaturedArticles.length < 6) {
@@ -39,10 +46,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       
       <SiteHeader currentCategory={currentCategory} />
 
+      {/* Phân hệ điều hướng cấp 2 (SubHeader) */}
+      {currentCategory && (
+        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+          <SubHeader currentCategory={currentCategory} currentSub={currentSub || undefined} />
+        </div>
+      )}
+
       {/* Page Title */}
-      <div className="max-w-7xl mx-auto px-5 lg:px-8 py-5 md:py-10 border-b border-gray-100">
-         <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">{currentCategory ? (categories.find((c: any) => c.slug === currentCategory)?.name ?? 'Tin Tức') : 'Tin Tức Công Nghệ & Đổi Mới'}</h1>
-      </div>
+      
 
       <main className="max-w-7xl mx-auto px-5 lg:px-8 py-6 md:py-8">
         
@@ -163,14 +175,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#111] text-white py-14 mt-12">
+      <footer className="bg-[#111] text-white py-14 mt-12 border-t border-white/10">
          <div className="max-w-7xl mx-auto px-5 lg:px-8">
+           {/* Top Footer: Links */}
            <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-sm mb-12">
              <div>
                <h4 className="font-black uppercase tracking-widest mb-5 text-white/50 text-xs">Về Chúng Tôi</h4>
                <ul className="space-y-3 text-white/70">
-                 <li><Link href="#" className="hover:text-white transition-colors">Giới thiệu Innovators</Link></li>
-                 <li><Link href="#" className="hover:text-white transition-colors">Tuyển dụng</Link></li>
+                 <li><Link href="#" className="hover:text-white transition-colors">Giới thiệu</Link></li>
+                 {/* <li><Link href="#" className="hover:text-white transition-colors">Tuyển dụng</Link></li> */}
                  <li><Link href="#" className="hover:text-white transition-colors">Liên hệ tòa soạn</Link></li>
                </ul>
              </div>
@@ -178,7 +191,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                <h4 className="font-black uppercase tracking-widest mb-5 text-white/50 text-xs">Chuyên Mục</h4>
                <ul className="space-y-3 text-white/70">
                  {categories.map((cat: any) => (
-                   <li key={cat.id}><Link href={`/?category=${cat.slug}`} className="hover:text-white transition-colors">{cat.name}</Link></li>
+                   <li key={cat.id}><Link href={`/?category=${cat.slug}`} className="hover:text-white transition-colors uppercase">{cat.name}</Link></li>
                  ))}
                </ul>
              </div>
@@ -195,13 +208,43 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                <ul className="space-y-3 text-white/70">
                  <li><Link href="#" className="hover:text-white transition-colors">Facebook</Link></li>
                  <li><Link href="#" className="hover:text-white transition-colors">YouTube</Link></li>
-                 <li><Link href="#" className="hover:text-white transition-colors">Zalo OA</Link></li>
+                 <li><Link href="#" className="hover:text-white transition-colors">TikTok</Link></li>
                </ul>
              </div>
            </div>
-           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-             <Link href="/" className="text-2xl font-black tracking-tighter uppercase font-serif hover:text-rose-400 transition-colors">INNOVATORS</Link>
-             <p className="text-xs text-white/30 tracking-widest uppercase">© 2026 Mạng Lưới Tin Tức Innovators. Bảo lưu mọi quyền.</p>
+
+           {/* Bottom Footer: License & Info */}
+           <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row gap-8 items-start">
+             {/* Logo Khởi Nghiệp Trẻ sử dụng icon.png */}
+             <div className="bg-white p-6 rounded-sm w-56 flex-shrink-0 flex items-center justify-center">
+              <img 
+                src="/icon.png" 
+                alt="Khởi Nghiệp Trẻ" 
+                className="w-full h-auto object-contain" 
+              />
+            </div>
+
+             {/* Thông tin chi tiết */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 text-[15px] text-white/60 leading-relaxed flex-1">
+                <div className="space-y-1">
+                  <p>Cơ quan chủ quản: <span className="text-white/90">Hội Doanh nhân trẻ Việt Nam</span></p>
+                  <p>Tổng Biên tập: <span className="text-white/90">Nguyễn Ngọc Ánh</span></p>
+                  <p>Phó Tổng Biên tập: <span className="text-white/90">Nguyễn Minh Châu</span></p>
+                  <p>Ngày thành lập: <span className="text-white/90">Ngày 20 tháng 03 năm 2026</span></p>
+                </div>
+                <div className="space-y-1">
+                  <p>Địa chỉ: 10-12 Đinh Tiên Hoàng, P.Sài Gòn, TP.HCM</p>
+                  <p>Điện thoại: 0349531735</p>
+                  <p>Email: <a href="mailto:toasoan@khoinghieptre.vn" className="hover:text-white">toasoan@khoinghieptre.vn</a></p>
+                  <p>Liên hệ quảng cáo: <a href="mailto:quangcao@khoinghieptre.vn" className="hover:text-white">quangcao@khoinghieptre.vn</a></p>
+                </div>
+             </div>
+           </div>
+
+           <div className="mt-10 pt-6 border-t border-white/5 flex justify-end">
+              <p className="text-[10px] text-white/30 tracking-widest uppercase">
+                © 2026 MẠNG LƯỚI TIN TỨC INNOVATORS. BẢO LƯU MỌI QUYỀN.
+              </p>
            </div>
          </div>
       </footer>

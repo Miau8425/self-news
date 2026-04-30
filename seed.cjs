@@ -28,6 +28,8 @@ try {
       content TEXT,
       thumbnail_img TEXT,
       category_id INTEGER,
+      subcategory_slug TEXT DEFAULT NULL,
+      is_featured INTEGER DEFAULT 0,
       author_id INTEGER,
       status TEXT DEFAULT 'DRAFT',
       tags TEXT,
@@ -54,11 +56,16 @@ try {
     (4, 'writer_req', 'hashed', 'Cộng Tác Viên 1', 'WRITER', 'PENDING_APPROVAL');
 
     INSERT OR IGNORE INTO categories (id, name, slug) VALUES 
-    (1, 'Công nghệ & AI', 'cong-nghe-ai'),
-    (2, 'Kinh Doanh Số', 'kinh-doanh-so'),
-    (3, 'Phong Cách Sống', 'phong-cach-song'),
-    (4, 'Thế Giới', 'the-gioi'),
-    (5, 'Thương Trường', 'thuong-truong');
+    (1, 'Thời sự', 'thoi-su'),
+    (2, 'Kinh tế', 'kinh-te'),
+    (3, 'Tài chính', 'tai-chinh'),
+    (4, 'Khởi nghiệp', 'khoi-nghiep'),
+    (5, 'Khoa học - Công nghệ', 'khoa-hoc-cong-nghe'),
+    (6, 'Đời sống', 'doi-song'),
+    (7, 'Thế giới', 'the-gioi'),
+    (8, 'Multimedia', 'multimedia'),
+    (9, 'Video', 'video'),
+    (10, 'Bạn đọc', 'ban-doc'); 
 
     INSERT OR IGNORE INTO articles (id, title, slug, summary, content, thumbnail_img, category_id, author_id, status) VALUES 
     (1, 'Kỷ nguyên AI 2026: Trí tuệ Nhân tạo định hình lại tài chính', 'ky-nguyen-ai-2026', 'Các chuyên gia hàng đầu phố Wall đều đồng thuận rằng 2026 là năm bản lề của siêu trí tuệ hiện diện trong mọi ngóc ngách của nền kinh tế toàn cầu.', '<p>Nội dung chi tiết về tác động của hệ thống AI vào hệ sinh thái tài chính Phố Wall.</p>', 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1000', 1, 2, 'PUBLISHED'),
