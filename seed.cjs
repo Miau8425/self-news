@@ -50,10 +50,13 @@ try {
     );
 
     INSERT OR IGNORE INTO users (id, username, password_hash, name, role, status) VALUES 
-    (1, 'admin_master', 'hashed', 'Vương Quyền (Admin)', 'ADMIN', 'ACTIVE'),
-    (2, 'editor_pro', 'hashed', 'Ngọc Anh (Editor)', 'EDITOR', 'ACTIVE'),
-    (3, 'writer_active', 'hashed', 'Hoàng Nam (Writer)', 'WRITER', 'ACTIVE'),
-    (4, 'writer_req', 'hashed', 'Cộng Tác Viên 1', 'WRITER', 'PENDING_APPROVAL');
+    (1, 'admin_master', 'hashed', 'Nguyễn Minh Châu (Admin)', 'ADMIN', 'ACTIVE'),
+    (2, 'editor_pro', 'hashed', 'Nguyễn Ngọc Ánh 05 (Editor)', 'EDITOR', 'ACTIVE'),
+    (3, 'writer_active', 'hashed', 'Ngọc Ánh 04 (Writer)', 'WRITER', 'ACTIVE'),
+    (4, 'writer_active', 'hashed', 'Minh Oanh (Writer)', 'WRITER', 'ACTIVE'),
+    (5, 'writer_active', 'hashed', 'Hồng Ân (Writer)', 'WRITER', 'ACTIVE'),
+    (6, 'writer_active', 'hashed', 'Minh Thy (Writer)', 'WRITER', 'ACTIVE'),
+    (7, 'writer_active', 'hashed', 'Ha Thien (Writer)', 'WRITER', 'ACTIVE'),
 
     INSERT OR IGNORE INTO categories (id, name, slug) VALUES 
     (1, 'Thời sự', 'thoi-su'),

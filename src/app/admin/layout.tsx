@@ -30,8 +30,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <Layout className="min-h-screen relative" hasSider>
       <Sider width={260} theme="dark" className="border-r" style={{ minHeight: '100vh', position: 'sticky', top: 0, left: 0 }}>
-        <div className="h-16 flex items-center justify-center text-white text-2xl font-bold bg-red-700">
-          INNOVATORS
+        <div className="h-20 flex items-center justify-center bg-white border-b border-gray-100">
+          <img 
+            src="/icon.png" 
+            alt="Logo" 
+            className="h-12 w-auto object-contain" 
+          />
         </div>
         
         {/* Bộ giả lập phân quyền */}
