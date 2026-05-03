@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Khảo sát an cư | E-Magazine Báo chí</title>
+<style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      /* Nền tổng thể: xanh xám rất nhạt, gần như trắng sữa pha chút lam */
+      background: #eef0f5;
+      font-family: 'Georgia', 'Times New Roman', 'Palatino', serif;
+      padding: 2rem 1.5rem;
+      color: #1e2b3c;
+      line-height: 1.5;
+    }
+
+    /* Container chính – phong cách báo in hiện đại */
+    .survey-container {
+      max-width: 880px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(21, 49, 98, 0.04);
+      padding: 2.5rem;
+    }
+
+    /* Header thăm dò */
+    .survey-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      /* Đường kẻ ngang nhẹ nhàng, cùng họ xanh */
+      border-bottom: 2px solid #d3dae8;
+      padding-bottom: 1rem;
+      margin-bottom: 1.8rem;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      /* Chữ header chuyển sang xám xanh trầm */
+      color: #4a5a72;
+    }
+
+    .badge {
+      font-weight: 600;
+      /* Nền badge: xanh lam nhạt, gần gũi với #153162 */
+      background: #e1e7f2;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.7rem;
+      color: #153162;
+    }
+
+    .total-votes {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      font-weight: 400;
+    }
+
+    /* Tiêu đề chính */
+    .survey-title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 2rem;
+      /* Màu chữ tiêu đề dùng chính #153162 */
+      color: #153162;
+      letter-spacing: -0.2px;
+      /* Đường viền trái đậm, làm điểm nhấn */
+      border-left: 4px solid #153162;
+      padding-left: 1.2rem;
+    }
+
+    /* Các lựa chọn */
+    .options-group {
+      margin: 1.5rem 0 1.8rem 0;
+    }
+
+    .option-item {
+      /* Viền xanh xám nhạt */
+      border: 1px solid #d0d8ea;
+      background: #fdfdff;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .option-item:hover {
+      /* Hover: nền xanh cực nhạt, viền đậm hơn */
+      background: #f4f6fc;
+      border-color: #b3bfd6;
+    }
+
+    .option-radio {
+      flex-shrink: 0;
+      margin-top: 0.2rem;
+    }
+
+    .option-radio input {
+      width: 1.1rem;
+      height: 1.1rem;
+      /* Màu radio button chuyển sang xanh chủ đạo */
+      accent-color: #153162;
+      cursor: pointer;
+    }
+
+    .option-text {
+      font-size: 1rem;
+      line-height: 1.45;
+      font-family: 'Palatino', 'Georgia', serif;
+      color: #1e2b3c;
+      font-weight: 440;
+    }
+
+    /* Nút bấm */
+    .vote-button {
+      /* Nút màu xanh chủ đạo */
+      background: #153162;
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      font-family: 'Inter', system-ui, sans-serif;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: auto;
+      min-width: 200px;
+      border-radius: 2px;
+    }
+
+    .vote-button.active {
+      /* Trạng thái active đậm hơn một chút */
+      background: #0e2347;
+    }
+
+    .vote-button:hover {
+      /* Hover sáng hơn chút, cho cảm giác ấm */
+      background: #1d4278;
+    }
+
+    /* Khu vực kết quả */
+    .result-area {
+      margin-top: 2rem;
+      border-top: 1px solid #dce2ef;
+      padding-top: 1.5rem;
+    }
+
+    .result-item {
+      margin-bottom: 1.6rem;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .result-label {
+      font-family: 'Georgia', serif;
+      color: #2a3a51;
+      max-width: 75%;
+      line-height: 1.4;
+    }
+
+    .result-percent {
+      font-family: 'Inter', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      /* Nền tag phần trăm: xanh nhạt nhã nhặn */
+      background: #e3e9f5;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      color: #153162;
+    }
+
+    .result-count {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: #5c6a80;
+      white-space: nowrap;
+    }
+
+    .bar-wrapper {
+      width: 100%;
+      height: 4px;
+      background: #e3e7f1;
+      margin-top: 0.4rem;
+    }
+
+    .bar-fill {
+      height: 100%;
+      /* Thanh tiến trình dùng chính màu chủ đạo */
+      background: #153162;
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .highlight .bar-fill {
+      /* Tông đậm hơn cho lựa chọn nổi bật */
+      background: #0f2648;
+    }
+
+    .highlight .result-label {
+      font-weight: 600;
+      color: #153162;
+    }
+
+    .result-footnote {
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      color: #7c87a0;
+      text-align: right;
+      letter-spacing: 0.3px;
+      border-top: 1px solid #e4e8f3;
+      padding-top: 1rem;
+    }
+
+    /* Trạng thái phụ */
+    .note-muted {
+      font-size: 0.75rem;
+      color: #7b88a1;
+      margin-top: 1rem;
+      font-family: monospace;
+    }
+
+    button {
+      background: none;
+      border: none;
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 1rem;
+      }
+      .survey-container {
+        padding: 1.5rem;
+      }
+      .survey-title {
+        font-size: 1.6rem;
+        padding-left: 0.9rem;
+      }
+      .option-text {
+        font-size: 0.9rem;
+      }
+      .option-item {
+        padding: 0.9rem 1.2rem;
+      }
+      .result-label {
+        max-width: 100%;
+      }
+      .result-header {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="survey-container">
+  <div class="survey-header">
+    <span class="badge">THĂM DÒ Ý KIẾN</span>
+    <span class="total-votes" id="totalVotesDisplay">0 lượt tham gia</span>
+  </div>
+
+  <div class="survey-title">
+    Bạn chọn phương án “an cư” nào?
+  </div>
+
+  <!-- Khu vực bỏ phiếu -->
+  <div id="voteArea">
+    <div class="options-group" id="optionsContainer">
+      <!-- Các option sẽ được tạo bằng JS để dễ quản lý hoặc có thể viết tay nhưng vẫn đồng bộ -->
+    </div>
+    <button class="vote-button" id="submitVoteBtn">GỬI BÌNH CHỌN</button>
+    <div class="note-muted">* Ngày bắt đầu khảo sát: 2/5/2026</div>
+  </div>
+
+  <!-- Khu vực kết quả (ẩn ban đầu) -->
+  <div id="resultArea" style="display: none;"></div>
+</div>
+
+<script>
+  // Dữ liệu các phương án (không icon)
+  const OPTIONS = [
+    "Ở lại thành phố để tìm kiếm cơ hội, chấp nhận áp lực chi phí và không gian sống hạn chế.",
+    "Ra vùng ven để có không gian sống dễ chịu hơn, đánh đổi bằng thời gian di chuyển và khoảng cách với trung tâm.",
+    "Ưu tiên sự ổn định, rời thành phố về quê để có mức sống thấp và gần gia đình dù có thể ít cơ hội nghề nghiệp.",
+    "Vẫn đang cân nhắc, chưa sẵn sàng đưa ra lựa chọn ở thời điểm hiện tại."
+  ];
+
+  // Khởi tạo dữ liệu votes từ localStorage
+  let votes = JSON.parse(localStorage.getItem("emagazine_survey_votes"));
+  if (!votes || votes.length !== OPTIONS.length) {
+    votes = new Array(OPTIONS.length).fill(0);
+  }
+
+  // Helper: format số
+  function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  // Tính tổng số phiếu
+  function getTotalVotes() {
+    return votes.reduce((sum, v) => sum + v, 0);
+  }
+
+  // Cập nhật hiển thị tổng số lượt trên header
+  function updateTotalVotesHeader() {
+    const total = getTotalVotes();
+    const totalSpan = document.getElementById("totalVotesDisplay");
+    if (totalSpan) totalSpan.innerText = formatNumber(total) + " lượt tham gia";
+  }
+
+  // Render form các lựa chọn (radio)
+  function renderVoteForm() {
+    const container = document.getElementById("optionsContainer");
+    if (!container) return;
+
+    let html = "";
+    OPTIONS.forEach((opt, idx) => {
+      html += `
+        <label class="option-item">
+          <div class="option-radio">
+            <input type="radio" name="pollOption" value="${idx}">
+          </div>
+          <div class="option-text">${opt}</div>
+        </label>
+      `;
+    });
+    container.innerHTML = html;
+
+    // Bắt sự kiện change cho radio để active nút bấm
+    const radios = document.querySelectorAll('input[name="pollOption"]');
+    const voteBtn = document.getElementById("submitVoteBtn");
+    if (radios && voteBtn) {
+      radios.forEach(radio => {
+        radio.addEventListener("change", () => {
+          voteBtn.classList.add("active");
+        });
+      });
+    }
+  }
+
+  // Render kết quả (sau khi bình chọn)
+  function renderResults(highlightIndex = null) {
+    const total = getTotalVotes();
+    const resultArea = document.getElementById("resultArea");
+    const voteArea = document.getElementById("voteArea");
+
+    if (!resultArea) return;
+
+    let resultsHtml = `<div class="result-area">`;
+
+    votes.forEach((count, idx) => {
+      const percent = total === 0 ? 0 : Math.round((count / total) * 100);
+      const isHighlight = (highlightIndex === idx);
+      resultsHtml += `
+        <div class="result-item ${isHighlight ? 'highlight' : ''}">
+          <div class="result-header">
+            <div class="result-label">${OPTIONS[idx]}</div>
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="result-percent">${percent}%</span>
+              <span class="result-count">${formatNumber(count)} phiếu</span>
+            </div>
+          </div>
+          <div class="bar-wrapper">
+            <div class="bar-fill" style="width: ${percent}%;"></div>
+          </div>
+        </div>
+      `;
+    });
+
+    resultsHtml += `
+      <div class="result-footnote">
+        Thời gian khảo sát: từ 2/5 · Kết quả được cập nhật theo lượt bình chọn
+      </div>
+    </div>`;
+
+    resultArea.innerHTML = resultsHtml;
+    resultArea.style.display = "block";
+    if (voteArea) voteArea.style.display = "none";
+  }
+
+  // Lưu votes vào localStorage
+  function persistVotes() {
+    localStorage.setItem("emagazine_survey_votes", JSON.stringify(votes));
+  }
+
+  // Xử lý khi người dùng bấm bình chọn
+  function handleVote() {
+    const selectedRadio = document.querySelector('input[name="pollOption"]:checked');
+    if (!selectedRadio) {
+      alert("Vui lòng chọn một phương án để tham gia khảo sát.");
+      return;
+    }
+
+    const selectedIndex = parseInt(selectedRadio.value);
+    if (isNaN(selectedIndex)) return;
+
+    // Ghi nhận phiếu bầu
+    votes[selectedIndex]++;
+    persistVotes();
+
+    // Cập nhật tổng phiếu trên header
+    updateTotalVotesHeader();
+
+    // Hiển thị kết quả (làm nổi bật lựa chọn vừa chọn)
+    renderResults(selectedIndex);
+  }
+
+  // Kiểm tra nếu đã từng bình chọn (có total > 0) thì hiển thị kết quả ngay thay vì form?
+  // Nhưng theo logic dân chủ: người dùng có thể xem kết quả nhưng vẫn muốn bỏ phiếu? 
+  // Ở đây: nếu chưa từng vote (tổng phiếu = 0) thì hiển thị form. Nếu đã có phiếu, vẫn hiển thị form nhưng có thể vote thêm.
+  // Tuy nhiên để tăng tính tương tác, mặc định hiển thị form vote, nếu muốn xem kết quả thì sau khi vote mới thấy.
+  // Nhưng ta cũng có thể cho toggle? Nhưng yêu cầu giữ đúng tinh thần file gốc: form vote -> sau khi vote xong -> kết quả.
+  // Nếu người dùng đã vote từ trước (trong localStorage có phiếu) -> muốn tôn trọng ? Vẫn để form vote.
+  // Để trải nghiệm tốt: Nếu đã có ít nhất 1 phiếu, có thể cho phép vote tiếp. (giữ nguyên form nhưng có kết quả? không, giữ như file cũ: sau vote mới thấy kết quả)
+  // Nâng cấp thêm: có nút "Xem kết quả hiện tại" (tùy chọn) nhưng để tối giản báo chí, giữ nguyên flow gốc.
+  
+  // Nhưng thông minh hơn: nếu trong lần đầu mở trang đã có dữ liệu vote tồn tại, cho phép người dùng xem kết quả mà không cần vote lại.
+  // Thêm một nút "Xem kết quả" nhẹ nhàng.
+  const totalExisting = getTotalVotes();
+  if (totalExisting > 0) {
+    // Hiển thị kết quả + một nút để vote lại?  => nhưng file gốc ẩn form sau khi vote, không có nút vote lại.
+    // Để linh hoạt, nếu có dữ liệu từ trước, ta vẫn hiển thị form để vote, nhưng có thể thêm một link "Xem kết quả trước đó"?
+    // Làm đẹp: thêm hành động "Xem thống kê hiện tại" - nhưng vì không dùng icon và giữ gọn, 
+    // Tôi sẽ tạo một nút phụ (text) để show kết quả mà không cần vote.
+    // Nhưng để thuần như yêu cầu nâng cấp, tôi sẽ thêm một đoạn nhẹ "Xem kết quả sơ bộ" để tăng trải nghiệm báo chí.
+    // const voteAreaDiv = document.getElementById("voteArea");
+    // if (voteAreaDiv && !document.getElementById("viewResultBtn")) {
+    //   const viewBtn = document.createElement("button");
+    //   viewBtn.innerText = "Xem kết quả hiện tại";
+    //   viewBtn.style.background = "none";
+    //   viewBtn.style.border = "1px solid #cdc9be";
+    //   viewBtn.style.padding = "0.5rem 1rem";
+    //   viewBtn.style.fontSize = "0.75rem";
+    //   viewBtn.style.marginTop = "0.8rem";
+    //   viewBtn.style.cursor = "pointer";
+    //   viewBtn.style.fontFamily = "Inter, sans-serif";
+    //   viewBtn.style.color = "#6f6a60";
+    //   viewBtn.id = "viewResultBtn";
+    //   viewBtn.onclick = () => {
+    //     renderResults(null);
+    //     const voteSec = document.getElementById("voteArea");
+    //     if (voteSec) voteSec.style.display = "none";
+    //   };
+    //   voteAreaDiv.appendChild(viewBtn);
+    // }
+  }
+
+  // Khởi chạy
+  renderVoteForm();
+  updateTotalVotesHeader();
+
+  // Gắn sự kiện cho nút bình chọn
+  const submitBtn = document.getElementById("submitVoteBtn");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", handleVote);
+  }
+</script>
+
+</body>
+</html>

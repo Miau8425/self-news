@@ -47,7 +47,7 @@ const getCategoryName = (slug: string) => {
     'khoa-hoc-cong-nghe': 'Khoa học - Công nghệ',
     'doi-song': 'Đời sống',
     'the-gioi': 'Thế giới',
-    'multimedia': 'Multimedia',
+    'multimedia': 'Đa phương tiện',
     'video': 'Video',
     'ban-doc': 'Bạn đọc'
   };

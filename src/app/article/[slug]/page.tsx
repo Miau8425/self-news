@@ -7,8 +7,16 @@ import { MessageOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
 import { cookies } from 'next/headers';
 import SiteHeader from '@/components/SiteHeader';
+import LongformEmbed from '@/components/LongformEmbed';
+import HousingDreamLongform from '@/components/longforms/HousingDreamLongform';
 
 export const revalidate = 0;
+
+function extractLongformPath(tags?: string | null) {
+  if (!tags) return null;
+  const match = tags.match(/(?:^|\s)longform:([^\s]+)/);
+  return match?.[1] || null;
+}
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
@@ -46,6 +54,9 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
   };
 
   const readTime = Math.max(3, Math.ceil((article.content || '').replace(/<[^>]*>/g, '').split(' ').length / 200));
+  const longformPath = extractLongformPath(article.tags);
+  const isLongform = Boolean(longformPath);
+  const isHousingDreamLongform = slug === 'giac-mo-an-cu-cua-nguoi-tre';
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-gray-900 font-sans selection:bg-rose-200">
@@ -53,70 +64,94 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
       <SiteHeader variant="article" />
 
       <main>
-        {/* Article Hero — Full-bleed cinematic */}
-        <section className="relative w-full h-[65vh] md:h-[75vh] min-h-[420px] flex items-end overflow-hidden bg-gray-100">
-          <div className="absolute inset-0">
-            {article.thumbnail_img ? (
-              <img
-                src={article.thumbnail_img}
-                alt="Banner"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
-                 <span className="text-4xl block mb-2">📰</span>
-                 <span className="font-bold tracking-widest text-sm">KHÔNG CÓ ẢNH BÌA</span>
+        {isHousingDreamLongform ? (
+          <>
+            <HousingDreamLongform />
+            <section className="max-w-3xl mx-auto px-4 md:px-8 py-10">
+              <div className="pt-8 border-t border-gray-100 flex flex-wrap gap-2">
+                <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#{article.category_name?.replace(/\s+/g, '')}</span>
+                <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#Longform</span>
+                <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#DoiSong</span>
+                <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#ChuyenDongTre</span>
               </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-          </div>
-          <div className="relative max-w-5xl mx-auto w-full px-4 md:px-8 pb-14 md:pb-20">
-            <div className="mb-5 flex items-center gap-3 flex-wrap">
-              <span className="inline-block bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded">
-                {article.category_name}
-              </span>
-              <span className="text-white/60 text-xs font-bold">{readTime} phút đọc</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-white mb-6 max-w-4xl drop-shadow-2xl">
-              {article.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-white/70 text-xs font-bold uppercase tracking-widest">
-              <span className="flex items-center gap-2"><UserOutlined /> {article.author_name || 'Innovators Desk'}</span>
-              <span>•</span>
-              <span>{format(new Date(article.published_at || article.created_at || Date.now()), 'dd MMM yyyy')}</span>
-              <span>•</span>
-              <span className="flex items-center gap-1"><MessageOutlined /> {comments.length} bình luận</span>
-            </div>
-          </div>
-        </section>
+            </section>
+          </>
+        ) : (
+          <>
+            {/* Article Hero — Full-bleed cinematic */}
+            <section className="relative w-full h-[65vh] md:h-[75vh] min-h-[420px] flex items-end overflow-hidden bg-gray-100">
+              <div className="absolute inset-0">
+                {article.thumbnail_img ? (
+                  <img
+                    src={article.thumbnail_img}
+                    alt="Banner"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                     <span className="text-4xl block mb-2">📰</span>
+                     <span className="font-bold tracking-widest text-sm">KHÔNG CÓ ẢNH BÌA</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+              </div>
+              <div className="relative max-w-5xl mx-auto w-full px-4 md:px-8 pb-14 md:pb-20">
+                <div className="mb-5 flex items-center gap-3 flex-wrap">
+                  <span className="inline-block bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded">
+                    {article.category_name}
+                  </span>
+                  <span className="text-white/60 text-xs font-bold">{readTime} phút đọc</span>
+                </div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-white mb-6 max-w-4xl drop-shadow-2xl">
+                  {article.title}
+                </h1>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-white/70 text-xs font-bold uppercase tracking-widest">
+                  <span className="flex items-center gap-2"><UserOutlined /> {article.author_name || 'Innovators Desk'}</span>
+                  <span>•</span>
+                  <span>{format(new Date(article.published_at || article.created_at || Date.now()), 'dd MMM yyyy')}</span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1"><MessageOutlined /> {comments.length} bình luận</span>
+                </div>
+              </div>
+            </section>
 
-        {/* Article Body */}
-        <section className="max-w-3xl mx-auto px-4 md:px-8 py-14 md:py-20">
-          {/* Pull Quote / Summary */}
-          {article.summary && (
-            <blockquote className="text-xl md:text-2xl font-serif text-gray-600 leading-relaxed mb-14 italic border-l-4 border-rose-600 pl-6 py-2 bg-rose-50/50 rounded-r-xl">
-              {article.summary}
-            </blockquote>
-          )}
+            {/* Article Body */}
+            <section className={isLongform ? 'max-w-6xl mx-auto px-4 md:px-8 py-14 md:py-20' : 'max-w-3xl mx-auto px-4 md:px-8 py-14 md:py-20'}>
+              {/* Pull Quote / Summary */}
+              {article.summary && (
+                <blockquote className={isLongform
+                  ? 'max-w-3xl mx-auto text-xl md:text-2xl font-serif text-gray-600 leading-relaxed mb-14 italic border-l-4 border-rose-600 pl-6 py-2 bg-rose-50/50 rounded-r-xl'
+                  : 'text-xl md:text-2xl font-serif text-gray-600 leading-relaxed mb-14 italic border-l-4 border-rose-600 pl-6 py-2 bg-rose-50/50 rounded-r-xl'}>
+                  {article.summary}
+                </blockquote>
+              )}
 
-          <div className="prose prose-lg md:prose-xl prose-stone max-w-none
-            prose-headings:font-black prose-headings:tracking-tight
-            prose-p:leading-[1.85] prose-p:text-gray-700
-            prose-a:text-rose-600 prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-gray-900
-            prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-10
-            prose-blockquote:border-rose-500 prose-blockquote:bg-rose-50/50 prose-blockquote:rounded-r-xl prose-blockquote:py-2 prose-blockquote:not-italic prose-blockquote:text-gray-700
-          ">
-            {parse(article.content || '<p>Nội dung đang được biên soạn...</p>')}
-          </div>
+              {isLongform && longformPath ? (
+                <div className="rounded-[28px] overflow-hidden border border-gray-200 shadow-[0_18px_60px_rgba(15,23,42,0.12)] bg-white">
+                  <LongformEmbed src={longformPath} title={article.title} />
+                </div>
+              ) : (
+                <div className="prose prose-lg md:prose-xl prose-stone max-w-none
+                  prose-headings:font-black prose-headings:tracking-tight
+                  prose-p:leading-[1.85] prose-p:text-gray-700
+                  prose-a:text-rose-600 prose-a:no-underline hover:prose-a:underline
+                  prose-strong:text-gray-900
+                  prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-10
+                  prose-blockquote:border-rose-500 prose-blockquote:bg-rose-50/50 prose-blockquote:rounded-r-xl prose-blockquote:py-2 prose-blockquote:not-italic prose-blockquote:text-gray-700
+                ">
+                  {parse(article.content || '<p>Nội dung đang được biên soạn...</p>')}
+                </div>
+              )}
 
-          {/* Tags-like category badge */}
-          <div className="mt-16 pt-8 border-t border-gray-100 flex flex-wrap gap-2">
-            <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#{article.category_name?.replace(/\s+/g, '')}</span>
-            <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#Innovators</span>
-            <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#TinNóng</span>
-          </div>
-        </section>
+              {/* Tags-like category badge */}
+              <div className={isLongform ? 'max-w-3xl mx-auto mt-16 pt-8 border-t border-gray-100 flex flex-wrap gap-2' : 'mt-16 pt-8 border-t border-gray-100 flex flex-wrap gap-2'}>
+                <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#{article.category_name?.replace(/\s+/g, '')}</span>
+                <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#Innovators</span>
+                <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#TinNóng</span>
+              </div>
+            </section>
+          </>
+        )}
 
         {/* Related Articles */}
         {relatedArticles.length > 0 && (

@@ -66,7 +66,7 @@ try {
     (5, 'Khoa học - Công nghệ', 'khoa-hoc-cong-nghe'),
     (6, 'Đời sống', 'doi-song'),
     (7, 'Thế giới', 'the-gioi'),
-    (8, 'Multimedia', 'multimedia'),
+    (8, 'Đa phương tiện', 'multimedia'),
     (9, 'Video', 'video'),
     (10, 'Bạn đọc', 'ban-doc'); 
 
@@ -74,6 +74,25 @@ try {
     (1, 'Kỷ nguyên AI 2026: Trí tuệ Nhân tạo định hình lại tài chính', 'ky-nguyen-ai-2026', 'Các chuyên gia hàng đầu phố Wall đều đồng thuận rằng 2026 là năm bản lề của siêu trí tuệ hiện diện trong mọi ngóc ngách của nền kinh tế toàn cầu.', '<p>Nội dung chi tiết về tác động của hệ thống AI vào hệ sinh thái tài chính Phố Wall.</p>', 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1000', 1, 2, 'PUBLISHED'),
     (2, 'Siêu đô thị xanh: Tầm nhìn bất động sản tương lai', 'sieu-do-thi-xanh', 'Những đại đô thị ngập tràn cây xanh và không phát thải carbon đang trở thành điểm đến lý tưởng của dòng vốn ngoại.', '<p>Phân tích dự án đô thị thông minh...</p>', 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&q=80&w=1000', 2, 3, 'PUBLISHED'),
     (3, 'Bản thảo Tuyệt Mật: Cỗ Máy Lượng Tử Ánh Sáng', 'ban-thao-tuyet-mat', 'Vừa qua, một tài liệu rò rỉ cho thấy tham vọng của các Start-up thung lũng Silicon đã tiến xa đến việc phá vỡ nguyên lý bảo mật bằng sức mạnh lượng tử.', '<p>Đây là bài chờ duyệt</p>', 'https://images.unsplash.com/photo-1533227260871-fa5d202bfb73?auto=format&fit=crop&q=80&w=1000', 1, 3, 'PENDING_REVIEW');
+
+    INSERT OR IGNORE INTO articles (
+      id, title, slug, summary, content, thumbnail_img, category_id,
+      subcategory_slug, is_featured, author_id, status, tags, published_at
+    ) VALUES (
+      7,
+      'Giấc mơ an cư của người trẻ',
+      'giac-mo-an-cu-cua-nguoi-tre',
+      'Giá bất động sản và lãi suất vay tăng mạnh đang buộc người trẻ tái định nghĩa giấc mơ an cư bằng những lựa chọn sống linh hoạt và thực tế hơn.',
+      '<p>Một bài long-form về bài toán an cư của người trẻ, gồm phần kể chuyện, dữ liệu trực quan và các khối tương tác đa phương tiện.</p>',
+      '/long-form/giac-mo-an-cu/img/intro_2.jpg',
+      8,
+      NULL,
+      1,
+      2,
+      'PUBLISHED',
+      '#multimedia #longform longform:/long-form/giac-mo-an-cu/index.html',
+      datetime('now')
+    );
   `);
   console.log('Kho dữ liệu đã được lấp đầy bản thảo siêu cấp!');
 } catch(e) {
