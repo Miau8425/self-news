@@ -16,7 +16,7 @@ export default function LongformEmbed({ src, title }: LongformEmbedProps) {
 
     let frameWindow: Window | null = null;
     let resizeHandler: (() => void) | null = null;
-    let syncTimer: ReturnType<typeof window.setInterval> | null = null;
+    let syncTimer: number | null = null;
 
     const syncHeight = () => {
       try {
