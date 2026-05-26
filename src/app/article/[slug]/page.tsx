@@ -3,20 +3,59 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { addComment } from './actions';
 import parse from 'html-react-parser';
-import { MessageOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
 import { cookies } from 'next/headers';
 import SiteHeader from '@/components/SiteHeader';
 import LongformEmbed from '@/components/LongformEmbed';
-import HousingDreamLongform from '@/components/longforms/HousingDreamLongform';
 
 export const revalidate = 0;
 
-function extractLongformPath(tags?: string | null) {
-  if (!tags) return null;
-  const match = tags.match(/(?:^|\s)longform:([^\s]+)/);
-  return match?.[1] || null;
-}
+const MessageIcon = ({ className }: { className?: string }) => (
+  <svg
+    aria-hidden="true"
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+  </svg>
+);
+
+const UserIcon = ({ className }: { className?: string }) => (
+  <svg
+    aria-hidden="true"
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="7" r="4" />
+    <path d="M20 21a8 8 0 0 0-16 0" />
+  </svg>
+);
+
+const LockIcon = ({ className }: { className?: string }) => (
+  <svg
+    aria-hidden="true"
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="11" width="18" height="11" rx="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
@@ -54,9 +93,11 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
   };
 
   const readTime = Math.max(3, Math.ceil((article.content || '').replace(/<[^>]*>/g, '').split(' ').length / 200));
-  const longformPath = extractLongformPath(article.tags);
-  const isLongform = Boolean(longformPath);
-  const isHousingDreamLongform = slug === 'giac-mo-an-cu-cua-nguoi-tre';
+  const tagString = (article.tags || '').toLowerCase();
+  const contentValue = (article.content || '').trim();
+  const isLongformArticle = tagString.includes('#longform') ||
+    contentValue.startsWith('<!DOCTYPE html') ||
+    contentValue.startsWith('<html');
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-gray-900 font-sans selection:bg-rose-200">
@@ -64,9 +105,11 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
       <SiteHeader variant="article" />
 
       <main>
-        {isHousingDreamLongform ? (
+        {isLongformArticle ? (
           <>
-            <HousingDreamLongform />
+            <section className="w-full">
+              <LongformEmbed src={`/longform/${slug}`} title={article.title} />
+            </section>
             <section className="max-w-3xl mx-auto px-4 md:px-8 py-10">
               <div className="pt-8 border-t border-gray-100 flex flex-wrap gap-2">
                 <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#{article.category_name?.replace(/\s+/g, '')}</span>
@@ -106,45 +149,43 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
                   {article.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-white/70 text-xs font-bold uppercase tracking-widest">
-                  <span className="flex items-center gap-2"><UserOutlined /> {article.author_name || 'Innovators Desk'}</span>
+                  <span className="flex items-center gap-2">
+                    <UserIcon className="h-4 w-4" />
+                    {article.author_name || 'Innovators Desk'}
+                  </span>
                   <span>•</span>
                   <span>{format(new Date(article.published_at || article.created_at || Date.now()), 'dd MMM yyyy')}</span>
                   <span>•</span>
-                  <span className="flex items-center gap-1"><MessageOutlined /> {comments.length} bình luận</span>
+                  <span className="flex items-center gap-1">
+                    <MessageIcon className="h-4 w-4" />
+                    {comments.length} bình luận
+                  </span>
                 </div>
               </div>
             </section>
 
             {/* Article Body */}
-            <section className={isLongform ? 'max-w-6xl mx-auto px-4 md:px-8 py-14 md:py-20' : 'max-w-3xl mx-auto px-4 md:px-8 py-14 md:py-20'}>
+            <section className="max-w-3xl mx-auto px-4 md:px-8 py-14 md:py-20">
               {/* Pull Quote / Summary */}
               {article.summary && (
-                <blockquote className={isLongform
-                  ? 'max-w-3xl mx-auto text-xl md:text-2xl font-serif text-gray-600 leading-relaxed mb-14 italic border-l-4 border-rose-600 pl-6 py-2 bg-rose-50/50 rounded-r-xl'
-                  : 'text-xl md:text-2xl font-serif text-gray-600 leading-relaxed mb-14 italic border-l-4 border-rose-600 pl-6 py-2 bg-rose-50/50 rounded-r-xl'}>
+                <blockquote className="text-xl md:text-2xl font-serif text-gray-600 leading-relaxed mb-14 italic border-l-4 border-rose-600 pl-6 py-2 bg-rose-50/50 rounded-r-xl">
                   {article.summary}
                 </blockquote>
               )}
 
-              {isLongform && longformPath ? (
-                <div className="rounded-[28px] overflow-hidden border border-gray-200 shadow-[0_18px_60px_rgba(15,23,42,0.12)] bg-white">
-                  <LongformEmbed src={longformPath} title={article.title} />
-                </div>
-              ) : (
-                <div className="prose prose-lg md:prose-xl prose-stone max-w-none
-                  prose-headings:font-black prose-headings:tracking-tight
-                  prose-p:leading-[1.85] prose-p:text-gray-700
-                  prose-a:text-rose-600 prose-a:no-underline hover:prose-a:underline
-                  prose-strong:text-gray-900
-                  prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-10
-                  prose-blockquote:border-rose-500 prose-blockquote:bg-rose-50/50 prose-blockquote:rounded-r-xl prose-blockquote:py-2 prose-blockquote:not-italic prose-blockquote:text-gray-700
-                ">
-                  {parse(article.content || '<p>Nội dung đang được biên soạn...</p>')}
-                </div>
-              )}
+              <div className="prose prose-lg md:prose-xl prose-stone max-w-none
+                prose-headings:font-black prose-headings:tracking-tight
+                prose-p:leading-[1.85] prose-p:text-gray-700
+                prose-a:text-rose-600 prose-a:no-underline hover:prose-a:underline
+                prose-strong:text-gray-900
+                prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-10
+                prose-blockquote:border-rose-500 prose-blockquote:bg-rose-50/50 prose-blockquote:rounded-r-xl prose-blockquote:py-2 prose-blockquote:not-italic prose-blockquote:text-gray-700
+              ">
+                {parse(article.content || '<p>Nội dung đang được biên soạn...</p>')}
+              </div>
 
               {/* Tags-like category badge */}
-              <div className={isLongform ? 'max-w-3xl mx-auto mt-16 pt-8 border-t border-gray-100 flex flex-wrap gap-2' : 'mt-16 pt-8 border-t border-gray-100 flex flex-wrap gap-2'}>
+              <div className="mt-16 pt-8 border-t border-gray-100 flex flex-wrap gap-2">
                 <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#{article.category_name?.replace(/\s+/g, '')}</span>
                 <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#Innovators</span>
                 <span className="bg-gray-100 text-gray-600 text-xs font-bold px-4 py-2 rounded-full hover:bg-rose-100 hover:text-rose-700 cursor-pointer transition-colors">#TinNóng</span>
@@ -182,7 +223,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
         {/* Comments Section */}
         <section className="max-w-3xl mx-auto px-4 md:px-8 py-16">
           <h3 className="text-2xl font-black mb-10 flex items-center gap-3">
-            <MessageOutlined className="text-gray-400" />
+            <MessageIcon className="h-6 w-6 text-gray-400" />
             Bình Luận ({comments.length})
           </h3>
 
@@ -219,10 +260,10 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
             </div>
           ) : (
             <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-10 mb-12 text-center">
-              <LockOutlined className="text-3xl text-gray-400 mb-4" />
+              <LockIcon className="h-8 w-8 text-gray-400 mb-4" />
               <p className="text-gray-600 font-medium mb-5">Bạn cần đăng nhập để bình luận bài viết này.</p>
               <Link href="/login" className="inline-flex items-center gap-2 bg-black text-white font-bold py-3 px-8 rounded-full hover:bg-rose-600 transition-colors shadow-md">
-                <UserOutlined /> Đăng Nhập Ngay
+                <UserIcon className="h-4 w-4" /> Đăng Nhập Ngay
               </Link>
             </div>
           )}

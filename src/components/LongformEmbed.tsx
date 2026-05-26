@@ -3,11 +3,12 @@
 import { useEffect, useRef } from 'react';
 
 type LongformEmbedProps = {
-  src: string;
+  src?: string;
+  srcDoc?: string;
   title: string;
 };
 
-export default function LongformEmbed({ src, title }: LongformEmbedProps) {
+export default function LongformEmbed({ src, srcDoc, title }: LongformEmbedProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
@@ -64,12 +65,13 @@ export default function LongformEmbed({ src, title }: LongformEmbedProps) {
         window.clearInterval(syncTimer);
       }
     };
-  }, [src]);
+  }, [src, srcDoc]);
 
   return (
     <iframe
       ref={iframeRef}
-      src={src}
+      src={srcDoc ? undefined : src}
+      srcDoc={srcDoc}
       title={title}
       className="w-full border-0 bg-white"
       style={{ minHeight: '1200px' }}
