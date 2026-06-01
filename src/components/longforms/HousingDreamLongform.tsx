@@ -256,7 +256,7 @@ export default function HousingDreamLongform() {
 
         <div className="pt-10 text-right text-[15px] leading-8 text-[#5a5a66]">
           <p><i>Trình bày:</i> <b>Ngọc Ánh (05), Minh Châu</b></p>
-          <p><i>Nội dung:</i> <b>Minh Thy, Minh Thiên, Minh Oanh, Hồng Ân, Ngọc Ánh (04)</b></p>
+          <p><i>Nội dung:</i> <b>Minh Thy, Hà Thiên, Minh Oanh, Hồng Ân, Ngọc Ánh (04)</b></p>
         </div>
       </section>
     </div>
